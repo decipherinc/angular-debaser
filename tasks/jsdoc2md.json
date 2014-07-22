@@ -1,0 +1,6 @@
+{
+  "main": {
+    "src": "lib/behavior.js",
+    "dest": "docs/behavior.md"
+  }
+}
