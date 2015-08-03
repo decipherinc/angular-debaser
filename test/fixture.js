@@ -1,18 +1,11 @@
-(function () {
-  'use strict';
+'use strict';
 
-  window.sandbox;
+var chai = require('chai');
+var sinon = require('sinon');
+var angular = require('angular');
 
-  beforeEach(function () {
-    window.sandbox = sinon.sandbox.create('debaser');
-  });
+chai.use(require('sinon-chai'));
 
-  afterEach(function () {
-    window.sandbox.restore();
-  });
-
-  beforeEach(module(function ($provide) {
-    $provide.constant('debaserOptions', {});
-  }, 'decipher.debaser'));
-
-})();
+global.angular = angular;
+global.sinon = sinon;
+global.expect = chai.expect;

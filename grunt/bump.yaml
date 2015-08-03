@@ -1,0 +1,19 @@
+options:
+  files:
+    - package.json
+    - bower.json
+  updateConfigs:
+    - pkg
+    - bower
+  commit: true
+  commitMessage: Release v%VERSION%
+  commitFiles:
+    - ./bower.json
+    - ./package.json
+    - ./debaser*.js
+    - ./debaser*.map
+  createTag: true
+  tagName: v%VERSION%
+  tagMessage: Version %VERSION%
+  push: false
+  gitDescribeOptions: --tags --always --abrev=1 --dirty=-d

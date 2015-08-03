@@ -1,0 +1,7 @@
+options:
+  sourceMap: true
+  banner: <%= browserify.options.banner %>
+
+main:
+  src: debaser.js
+  dest: <%= min('debaser.js') %>

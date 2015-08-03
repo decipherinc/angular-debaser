@@ -1,0 +1,4 @@
+main:
+  options:
+    updateType: prompt
+    semver: false

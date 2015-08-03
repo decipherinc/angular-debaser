@@ -1,0 +1,11 @@
+---
+  build:
+    - browserify
+  test:
+    - mochify:main
+  default:
+    - build
+  docs:
+    - build
+    - clean
+    - jsdoc

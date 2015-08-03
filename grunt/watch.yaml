@@ -1,0 +1,21 @@
+---
+  gruntfile:
+    files:
+      - <%= task_files %>
+    tasks:
+      - jshint:gruntfile
+  main:
+    files:
+      - <%= src_files %>
+      - <%= test_files %>
+      - <%= task_files %>
+    tasks:
+      - jshint:main
+      - build
+      - karma:dev:run
+  adhoc:
+    files:
+      - test/adhoc/*.spec.js
+      - <%= task_files %>
+    tasks:
+      - karma:adhoc:run

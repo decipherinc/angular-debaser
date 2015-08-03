@@ -1,47 +1,53 @@
-(function () {
-  'use strict';
+'use strict';
 
-  describe('multiple modules', function () {
+var debaser = require('../../lib/').debaser;
+var angular = require('angular');
 
-    var marvin = 'marvin o\'gravel balloon face';
+describe('multiple modules', function () {
 
-    before(function () {
-      angular.module('putt-putt', [])
-        .factory('moonface', function (ziggy) {
-          return ziggy();
-        });
-    });
+  var marvin = 'marvin o\'gravel balloon face';
+
+  before(function () {
+    angular.module('putt-putt', [])
+      .factory('moonface', function (ziggy) {
+        return ziggy();
+      });
+  });
+
+  beforeEach(function () {
+    expect(function () {
+      debaser({ skipConfigs: true })
+        .module('putt-putt')
+        .module('soggy muff')
+        .module('buffalo bill')
+        .module('biffalo buff')
+        .object('sneepy')
+        .func('weepyWeed')
+        .object('paris_garters')
+        .func('ziggy')
+        .returns(marvin)
+        .object('harris_tweed')
+        .debase();
+    }).not.to.throw();
+  });
+
+  describe('putt-putt', function () {
+
+    var moonface;
 
     beforeEach(function () {
-      expect(function () {
-        debaser({skipConfigs: true})
-          .module('putt-putt')
-          .module('soggy muff')
-          .module('buffalo bill')
-          .module('biffalo buff')
-          .object('sneepy')
-          .func('weepyWeed')
-          .object('paris_garters')
-          .func('ziggy')
-          .returns(marvin)
-          .object('harris_tweed')
-          .debase();
-      }).not.to.throw();
+      require('../../lib/ng-mock');
     });
 
-    describe('putt-putt', function () {
+    beforeEach(window.inject(function (_moonface_) {
+      moonface = _moonface_;
+    }));
 
-      var moonface;
-
-      beforeEach(inject(function (_moonface_) {
-        moonface = _moonface_;
-      }));
-
-      it('should provide "moonface", a function which returns "marvin"', function () {
+    it('should provide "moonface", a function which returns "marvin"',
+      function () {
         expect(moonface).to.equal(marvin);
       });
 
-    });
   });
+});
 
-})();

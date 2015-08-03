@@ -1,15 +1,25 @@
-(function () {
-  'use strict';
+'use strict';
 
-  describe('e2e', function () {
+describe('e2e', function () {
 
-    describe('single method', function () {
+  var exposed = ['CommonJS', 'Globals'];
+  var funcs = [require('../../lib'), global.debase];
+
+  funcs.forEach(function (func, idx) {
+
+    describe(exposed[idx], function () {
 
       var d;
+      var sandbox;
 
-      beforeEach(inject(['debaserDebaser', function (_Debaser_) {
-        d = new _Debaser_();
-      }]));
+      beforeEach(function () {
+        d = func.debaser();
+        sandbox = sinon.sandbox.create('e2e');
+      });
+
+      afterEach(function () {
+        sandbox.restore();
+      });
 
       it('should always return a Debaser', function () {
         Object.keys(d).filter(function (key) {
@@ -27,7 +37,7 @@
             d.module();
           }).not.to.throw();
           expect(function () {
-            d.module({herp: 'derp'});
+            d.module({ herp: 'derp' });
           }).to.throw(err);
           expect(function () {
             d.module([1, 2, 3]);
@@ -126,6 +136,7 @@
         });
       });
     });
-  });
 
-})();
+  })
+});
+

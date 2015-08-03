@@ -1,62 +1,59 @@
-(function (angular) {
-  'use strict';
+'use strict';
 
-  var inject = angular.mock.inject,
-      module = angular.mock.module;
+var Utils = require('../lib/utils');
 
-  describe('superpowers', function () {
+require('./fixture');
 
-    var powers,
-        config;
+describe('superpowers', function () {
 
-    beforeEach(module(function ($provide) {
-      $provide.constant('debaserOptions', {});
-    }, 'decipher.debaser'));
+  var powers;
+  var config;
 
-    beforeEach(inject(['debaserSuperpowers', function ($superpowers) {
-      powers = $superpowers;
-      config = {};
-    }]));
-
-    describe('sinon proxy functions', function () {
-      it('should return the proper objects', function () {
-        var stub = sinon.stub,
-          args = {
-            callsArg: [0],
-            callsArgOn: [0, {}],
-            callsArgWith: [0],
-            callsArgOnWith: [0, {}],
-            yieldsOn: [{}],
-            yieldsToOn: ['foo', {}],
-            callsArgAsync: [0],
-            callsArgOnAsync: [0, {}],
-            callsArgWithAsync: [0],
-            callsArgOnWithAsync: [0, {}],
-            yieldsOnAsync: [{}],
-            yieldsToOnAsync: ['foo', {}],
-            returnsArg: [0]
-          };
-
-        angular.forEach(stub, function (fn, name) {
-          var result;
-          config.func = stub();
-          if (angular.isFunction(fn) && powers.$SINON_EXCLUDE.indexOf(name) === -1) {
-            expect(powers[name]).to.be.a('function');
-            if (['onCall', 'onFirstCall', 'onSecondCall',
-              'onThirdCall'].indexOf(name) > -1) {
-              result = powers[name].apply(config, args[name]);
-              expect(result).to.be.an('object');
-              expect(result.end).to.be.a('function');
-              expect(result.end()).to.equal(config);
-            }
-            else {
-              expect(powers[name].apply(config, args[name])).to.be.undefined;
-            }
-          }
-        });
-      });
-    });
-
+  beforeEach(function () {
+    config = {};
   });
 
-})(window.angular);
+  describe('sinon proxy functions', function () {
+    it('should return the proper objects', function () {
+      var stub = sinon.stub;
+      var args = {
+        callsArg: [0],
+        callsArgOn: [0, {}],
+        callsArgWith: [0],
+        callsArgOnWith: [0, {}],
+        yieldsOn: [{}],
+        yieldsToOn: ['foo', {}],
+        callsArgAsync: [0],
+        callsArgOnAsync: [0, {}],
+        callsArgWithAsync: [0],
+        callsArgOnWithAsync: [0, {}],
+        yieldsOnAsync: [{}],
+        yieldsToOnAsync: ['foo', {}],
+        returnsArg: [0]
+      };
+
+      Utils.each(stub, function (fn, name) {
+        var result;
+        config.func = stub();
+        if (Utils.isFunction(fn) &&
+          powers.$SINON_EXCLUDE.indexOf(name) === -1) {
+          expect(powers[name]).to.be.a('function');
+          if ([
+              'onCall', 'onFirstCall', 'onSecondCall',
+              'onThirdCall'
+            ].indexOf(name) > -1) {
+            result = powers[name].apply(config, args[name]);
+            expect(result).to.be.an('object');
+            expect(result.end).to.be.a('function');
+            expect(result.end()).to.equal(config);
+          }
+          else {
+            expect(powers[name].apply(config, args[name])).to.be.undefined;
+          }
+        }
+      });
+    });
+  });
+
+});
+

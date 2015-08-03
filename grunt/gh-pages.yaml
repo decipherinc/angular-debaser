@@ -1,0 +1,6 @@
+---
+  options:
+    base: ./docs
+    dotfiles: true
+  gh-pages:
+    src: '**/*'

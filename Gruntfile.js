@@ -1,55 +1,78 @@
+/* eslint-env node */
+
 'use strict';
 
 module.exports = function (grunt) {
+  var loadGruntConfig = require('load-grunt-config');
+  var pkg = grunt.file.readJSON('package.json'),
 
-  var path = require('path'),
-
-      MIN_HEADER = '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-        '* Copyright (c) <%= grunt.template.today("yyyy") %> Decipher, Inc.;' +
-        ' Licensed <%= pkg.license %> */',
-
-      MAIN_HEADER = MIN_HEADER +
-        '\n\n(function (window, angular) {\n' +
-        '  \'use strict\';\n\n',
-
-      pkg = grunt.file.readJSON(path.join(__dirname, 'package.json'));
-
-  require('time-grunt')(grunt);
-
-  require('load-grunt-config')(grunt, {
-    configPath: path.join(__dirname, 'tasks'),
-    data: {
+    /**
+     * Random bits of crap to send to the Grunt templates
+     * @type {{pkg: Object, bower: ?Object, min: Function, author: *}}
+     */
+    data = {
       pkg: pkg,
-      banner: MAIN_HEADER,
-      banner_min: MIN_HEADER,
-      footer: '})(window, window.angular);',
-      src_files: [
-        './lib/globals.js',
-        './lib/module.js',
-        './lib/*.js'
-      ],
-      test_files: [
-        './test/*.js',
-        './test/e2e/*.js',
-        './test/issues/*.js'
-      ],
-      test_deps: [
-        './support/angular/angular.js',
-        './support/angular-mocks/angular-mocks.js'
-      ],
-      test_deps_unstable: [
-        './support/angular-unstable/angular.js',
-        './support/angular-mocks-unstable/angular-mocks.js'
-      ],
-      task_files: [
-        './Gruntfile.js',
-        'tasks/*.js',
-        'package.json'
-      ]
+      bower: grunt.file.isFile('bower.json') &&
+      grunt.file.readJSON('bower.json'),
+
+      /**
+       * Dumb little function to generate a foo.min.ext filename from foo.ext
+       * @param {string} filepath Filepath
+       * @param {string} preExt Something other than 'min'
+       * @returns {string} Minified filepath
+       */
+      min: function min(filepath, preExt) {
+        var path = require('path');
+        preExt = preExt || 'min';
+        var ext = path.extname(filepath);
+        return path.basename(filepath, ext) + '.' + preExt + ext;
+      },
+
+      author: typeof pkg.author === 'string' ? pkg.author :
+        [pkg.author.name, pkg.author.email].join(' '),
+
+      exorcist: function() {
+        return require('exorcist')('envoy.js.map');
+      }
+    };
+
+  Object.defineProperty(data, 'author', {
+    /**
+     * Normalizes `author` field of `package.json`.
+     * @returns {string} Author name(s) and email(s)
+     */
+    get: function author() {
+      function _author(author) {
+        var format;
+        if (typeof author === 'string') {
+          return author;
+        }
+        format = require('util').format;
+        return format('%s <%s>', author.name, author.email);
+      }
+
+      if (Array.isArray(pkg.author)) {
+        return pkg.author.map(function (author) {
+          return _author(author);
+        }).join(', ');
+      }
+      return _author(pkg.author);
     }
   });
 
-};
+  if (grunt.option('time')) {
+    require('time-grunt')(grunt);
+  }
 
+  loadGruntConfig(grunt, {
+    jitGrunt: {
+      staticMappings: {
+        devUpdate: 'grunt-dev-update',
+        'bump-only': 'grunt-bump',
+        'bump-commit': 'grunt-bump',
+        'mochacov': 'grunt-mocha-cov'
+      }
+    },
+    data: data
+  });
+};

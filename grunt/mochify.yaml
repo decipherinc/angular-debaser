@@ -1,0 +1,12 @@
+---
+main:
+  src:
+    - test/config.spec.js
+    - test/aspect.spec.js
+    - test/superpowers.spec.js
+    - test/debaser.spec.js
+    - test/globals.spec.js
+    - test/e2e/method.spec.js
+    - test/e2e/modules.spec.js
+  options:
+    reporter: spec

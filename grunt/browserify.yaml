@@ -1,0 +1,46 @@
+options:
+  banner: |
+    /*! <%= pkg.name %> - v<%= pkg.version %>
+     * <%= pkg.homepage %>
+     * Copyright (c) <%= grunt.template.today('yyyy') %> Focusvision Worldwide; Licensed <%= pkg.license %>
+     */
+  browserifyOptions:
+    baseDir: '.'
+  ignore:
+    - './node_modules/angular-animate/**'
+
+main:
+  files:
+    <%= bower.main %>: <%= pkg.main %>
+  options:
+    transform:
+      -
+        - exposify
+        -
+          expose:
+            angular: angular
+            sinon: sinon
+            angular-mocks: angular-mocks
+            jasmine: jasmine
+
+min:
+  files:
+    "<%= min(bower.main) %>": <%= pkg.main %>
+  options:
+    transform:
+      -
+        - exposify
+        -
+          expose:
+            angular: angular
+            sinon: sinon
+            angular-mocks: angular-mocks
+            jasmine: jasmine
+      -
+        - uglifyify
+        -
+          global: true
+      -
+        - jsonminifyify
+        -
+          files: package.json
