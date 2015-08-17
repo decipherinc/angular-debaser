@@ -1,1 +1,9 @@
-main: lib/**/*.js
+---
+main:
+  src:
+    - lib/**/*.js
+    - test/**/*.js
+grunt:
+  files:
+    - grunt/**/*.js
+    - Gruntfile.js
