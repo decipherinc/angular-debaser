@@ -2,38 +2,37 @@
 
 require('./fixture');
 
-describe('Aspect', function () {
-
+describe('Aspect', function() {
   var createAspect = require('../lib/aspect');
   var sandbox;
 
-  beforeEach(function () {
+  beforeEach(function() {
     sandbox = sinon.sandbox.create('Aspect');
   });
 
-  afterEach(function () {
+  afterEach(function() {
     sandbox.restore();
   });
 
-  describe('factory', function () {
-
-    it('should set a name', function () {
+  describe('factory', function() {
+    it('should set a name', function() {
       var aspect;
-      var named_aspect;
+      var namedAspect;
 
       aspect = createAspect();
       sandbox.stub(aspect, '_initBehavior');
       sandbox.stub(aspect, '_initProto');
       expect(aspect.name).to.equal('base');
       expect(aspect.parent).to.be.undefined;
+
       // accessing the getter will make these two defined, so don't.
       expect(aspect._behavior).to.be.undefined;
       expect(aspect._proto).to.be.undefined;
-      named_aspect = createAspect('bob');
-      expect(named_aspect.name).to.equal('bob');
+      namedAspect = createAspect('bob');
+      expect(namedAspect.name).to.equal('bob');
     });
 
-    it('should accept a parent aspect', function () {
+    it('should accept a parent aspect', function() {
       var parent;
       var child;
       parent = createAspect('parent');
@@ -43,18 +42,17 @@ describe('Aspect', function () {
       sandbox.stub(parent, 'isAspectOf').returns(true);
       expect(child.config.foo).to.eql(parent.config.foo);
     });
-
   });
 
-  describe('property', function () {
+  describe('property', function() {
     var aspect;
 
-    beforeEach(function () {
+    beforeEach(function() {
       aspect = createAspect('properties');
     });
 
-    describe('behavior', function () {
-      it('should be omnipresent', function () {
+    describe('behavior', function() {
+      it('should be omnipresent', function() {
         expect(aspect._behavior).to.be.undefined;
         sandbox.spy(aspect, '_initBehavior');
         delete aspect.behavior;
@@ -68,8 +66,8 @@ describe('Aspect', function () {
       });
     });
 
-    describe('proto', function () {
-      it('should be omnipresent', function () {
+    describe('proto', function() {
+      it('should be omnipresent', function() {
         expect(aspect._proto).to.be.undefined;
         sandbox.spy(aspect, '_initProto');
         delete aspect.proto;
@@ -83,8 +81,8 @@ describe('Aspect', function () {
       });
     });
 
-    describe('parent', function () {
-      it('should set dirty flag', function () {
+    describe('parent', function() {
+      it('should set dirty flag', function() {
         var parent = createAspect('parent');
         aspect.parent = null;
         expect(aspect._dirty).to.be.falsy;
@@ -94,17 +92,16 @@ describe('Aspect', function () {
     });
   });
 
-  describe('method', function () {
+  describe('method', function() {
     var aspect;
 
-    describe('flush()', function () {
-
-      beforeEach(function () {
+    describe('flush()', function() {
+      beforeEach(function() {
         aspect = createAspect('flush');
       });
 
       it('should call serialize() against all queued items in the behavior',
-        function () {
+        function() {
           aspect.behavior.queue = [
             {
               assemble: sinon.stub().returns('flushed')
@@ -113,39 +110,37 @@ describe('Aspect', function () {
           expect(aspect.flush()).to.eql(['flushed']);
           expect(aspect.behavior.queue[0].assemble).to.have.been.calledOnce;
         });
-
     });
 
-    describe('_initProto()', function () {
-      var aspect;
+    describe('_initProto()', function() {
       var Utils = require('../lib/utils');
 
-      beforeEach(function () {
+      beforeEach(function() {
         aspect = createAspect();
         sandbox.spy(aspect, '_initProto');
       });
 
-      it('should do nothing if proto exists', function () {
+      it('should do nothing if proto exists', function() {
         aspect.proto = 'proto';
         expect(aspect._initProto).not.to.have.been.called;
         aspect._initProto();
         expect(aspect.proto).to.equal('proto');
       });
 
-      it('should avoid any superpowers beginning with $', function () {
+      it('should avoid any superpowers beginning with $', function() {
         sandbox.stub(aspect, 'createProxy').yields();
-        Utils.each(function (name) {
+        Utils.each(function(name) {
           expect(name.charAt(0)).not.to.equal('$');
         });
       });
 
-      it('should provide superpowers', function () {
+      it('should provide superpowers', function() {
         expect(aspect.proto.module).to.be.a('function');
         expect(aspect.proto.func).to.be.a('function');
         expect(aspect.proto.withObject).to.be.undefined;
       });
 
-      it('should inherit aspect from parent', function () {
+      it('should inherit aspect from parent', function() {
         var child = createAspect('module', aspect);
         expect(Utils.keys(child.proto)).not.to.eql(Utils.keys(aspect.proto));
         expect(child.proto.module).to.be.a('function');
