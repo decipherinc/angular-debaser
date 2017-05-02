@@ -126,7 +126,7 @@ Current dependencies:
   
 Required, but not marked as dependencies:
  
-  - [Mocha](http://visionmedia.github.io/mocha/) w/ [Chai](http://chaijs.com) *or*
+  - [Mocha](http://mochajs.org/) w/ [Chai](http://chaijs.com) *or*
   - [Jasmine](http://jasmine.github.io/)
 
 Recommended:
